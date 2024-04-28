@@ -1,16 +1,12 @@
-import { useState } from "react";
-import { useEffect } from "react";
-import ReactDOM from "react-dom";
+import React, { useState, useEffect } from "react";
 import ReactModal from "react-modal";
-
 import Loader from "./components/Loader/Loader";
 import searchImages from "./services/api";
 import SearchBar from "./components/SearchBar/SearchBar";
-import ImageCard from "./components/ImageCard/ImageCard";
+import ImageGallery from "./components/ImageGallery/ImageGallery";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
-import ImageGallery from "./components/ImageGallery/ImageGallery";
-
+import ImageModal from "./components/ImageModal/ImageModal";
 import "./App.css";
 
 const customStyles = {
@@ -28,7 +24,7 @@ ReactModal.setAppElement("#root");
 
 function App() {
   const [error, setError] = useState(null);
-  const [photos, setPhotos] = useState(null);
+  const [photos, setPhotos] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -39,10 +35,8 @@ function App() {
     setSearchValue(event.target.value.trim());
   };
 
-  const handleClick = (inputValue) => {
-    setPhotos([]);
+  const handleClick = () => {
     setCurrentPage(1);
-    setSearchValue(query);
   };
 
   const openModal = (photo) => {
@@ -54,37 +48,18 @@ function App() {
     setModalIsOpen(false);
   };
 
+  const onNextPage = async () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
   useEffect(() => {
     if (!searchValue) {
       return;
     }
-    const onNextPage = async () => {
-      setCurrentPage(currentPage + 1);
+    const fetchImages = async () => {
       setIsLoading(true);
       try {
         const response = await searchImages(searchValue, currentPage);
-        setPhotos((prevPhotos) => [...prevPhotos, ...response.data.results]);
-      } catch (error) {
-        setError(error);
-        console.error("Error fetching images:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    onNextPage();
-  }, [searchValue, currentPage]);
-
-  useEffect(() => {
-    if (!searchValue) {
-      return;
-    }
-
-    const onSubmit = async (event) => {
-      event.preventDefault();
-
-      setIsLoading(true);
-      try {
-        response = await searchImages(searchValue, currentPage);
         if (currentPage === 1) {
           setPhotos(response.data.results);
         } else {
@@ -97,23 +72,20 @@ function App() {
         setIsLoading(false);
       }
     };
-  }, [searchValue]);
+    fetchImages();
+  }, [searchValue, currentPage]);
 
   return (
     <div>
       <SearchBar
-        handleClick={handleClick}
         searchValue={searchValue}
         handleSearchChange={handleSearchChange}
-        onSubmit={onSubmit}
+        handleClick={handleClick}
       />
       <ImageGallery photos={photos} openModal={openModal} />
-      {photos && photos.length > 0 && <LoadMoreBtn onNextPage={onNextPage} />}
+      {photos.length > 0 && <LoadMoreBtn onNextPage={onNextPage} />}
       {isLoading && <Loader />}
       {error && <ErrorMessage />}
-      {(!photos || (photos.length === 0 && searchValue)) && !isLoading && (
-        <ErrorMessage />
-      )}
       <ReactModal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}

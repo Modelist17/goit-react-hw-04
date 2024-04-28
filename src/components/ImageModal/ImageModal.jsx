@@ -1,3 +1,4 @@
+import React from "react";
 import ReactModal from "react-modal";
 import styles from "./ImageModal.module.css";
 

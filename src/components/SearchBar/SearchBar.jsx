@@ -1,29 +1,19 @@
+import React from "react";
 import styles from "./SearchBar.module.css";
-import toast, { Toaster } from "react-hot-toast";
 
-const SearchBar = ({
-  onSubmit,
-  searchValue,
-  handleSearchChange,
-  handleClick,
-}) => {
-  const notify = () => toast("Enter your request");
+const SearchBar = ({ searchValue, handleSearchChange, handleClick }) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (searchValue) {
+      handleClick();
+    }
+  };
 
   return (
     <header>
       <div className={styles.container}>
-        <form className={styles.form} onSubmit={onSubmit}>
-          <button
-            className={styles.btn}
-            type="submit"
-            onClick={() => {
-              if (!searchValue) {
-                notify();
-              } else {
-                handleClick();
-              }
-            }}
-          >
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <button className={styles.btn} type="submit">
             &#x1F50D;
           </button>
           <input
