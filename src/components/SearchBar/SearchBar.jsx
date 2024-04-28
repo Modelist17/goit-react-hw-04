@@ -1,28 +1,41 @@
-import React from "react";
-import styles from "./SearchBar.module.css";
-import toast from "react-hot-toast";
+import css from "./SearchBar.module.css";
+import { toast } from "react-hot-toast";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 
-const SearchBar = ({ searchValue, handleSearchChange, handleSubmit }) => {
-  const notify = () => toast.error("Enter your request");
+const initialValues = { searchTerm: "" };
+
+const SearchBar = ({ onsearchQuery }) => {
+  const handleSubmit = (values) => {
+    if (!values.searchTerm) {
+      toast.error("Please enter a search term");
+      return;
+    }
+    onsearchQuery(values.searchTerm);
+  };
 
   return (
-    <header>
-      <div className={styles.container}>
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <button className={styles.btn} type="submit">
-            &#x1F50D;
-          </button>
-          <input
-            className={styles.inputField}
+    <header className={css.header}>
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <Form className={css.form}>
+          <Field
+            className={css.field}
             type="text"
+            name="searchTerm"
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
-            value={searchValue}
-            onChange={handleSearchChange}
           />
-        </form>
-      </div>
+          <ErrorMessage
+            className={css.error}
+            name="searchTerm"
+            component="span"
+          />
+
+          <button className={css.submitBtn} type="submit" aria-label="Search">
+            🔍
+          </button>
+        </Form>
+      </Formik>
     </header>
   );
 };

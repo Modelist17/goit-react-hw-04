@@ -1,12 +1,16 @@
-import React from "react";
-import ReactModal from "react-modal";
-import styles from "./ImageModal.module.css";
+import Modal from "react-modal";
+import css from "./ImageModal.module.css";
 
-const ImageModal = ({ photo, closeModal }) => {
+const ImageModal = ({ isOpen, onRequestClose, selectedImage }) => {
   return (
-    <ReactModal isOpen={true} onRequestClose={closeModal} style={customStyles}>
-      <img src={photo.urls.regular} alt={photo.alt_description} />
-    </ReactModal>
+    <Modal
+      className={css.modal}
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      contentLabel="Selected Image"
+    >
+      <img src={selectedImage} alt="Selected" />
+    </Modal>
   );
 };
 

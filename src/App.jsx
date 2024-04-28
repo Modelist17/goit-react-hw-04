@@ -9,19 +9,6 @@ import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import ImageModal from "./components/ImageModal/ImageModal";
 import "./App.css";
 
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-  },
-};
-
-ReactModal.setAppElement("#root");
-
 function App() {
   const [error, setError] = useState(null);
   const [photos, setPhotos] = useState([]);
@@ -43,7 +30,7 @@ function App() {
     }
     setPhotos([]); // Clear previous search results
     setCurrentPage(1); // Reset page to 1 for new search
-    setError(null); // Clear any previous errors
+    setError(null); 
     setIsLoading(true); // Start loading indicator
   };
 
@@ -86,27 +73,16 @@ function App() {
 
   return (
     <div>
-      <SearchBar
-        searchValue={searchValue}
-        handleSearchChange={handleSearchChange}
-        handleSubmit={handleSubmit} // Pass handleSubmit function to SearchBar
-      />
+      <SearchBar onsearchQuery={setSearchValue} />
       <ImageGallery photos={photos} openModal={openModal} />
       {photos.length > 0 && <LoadMoreBtn onNextPage={onNextPage} />}
       {isLoading && <Loader />}
       {error && <ErrorMessage />}
-      <ReactModal
+      <ImageModal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        style={customStyles}
-      >
-        {selectedPhoto && (
-          <img
-            src={selectedPhoto.urls.regular}
-            alt={selectedPhoto.alt_description}
-          />
-        )}
-      </ReactModal>
+        selectedImage={selectedPhoto && selectedPhoto.urls.regular}
+      />
     </div>
   );
 }
