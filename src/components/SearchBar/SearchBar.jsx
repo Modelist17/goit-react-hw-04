@@ -1,13 +1,9 @@
 import React from "react";
 import styles from "./SearchBar.module.css";
+import toast from "react-hot-toast";
 
-const SearchBar = ({ searchValue, handleSearchChange, handleClick }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (searchValue) {
-      handleClick();
-    }
-  };
+const SearchBar = ({ searchValue, handleSearchChange, handleSubmit }) => {
+  const notify = () => toast.error("Enter your request");
 
   return (
     <header>

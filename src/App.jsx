@@ -35,8 +35,16 @@ function App() {
     setSearchValue(event.target.value.trim());
   };
 
-  const handleClick = () => {
-    setCurrentPage(1);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (!searchValue) {
+      setError("Please enter a search query.");
+      return;
+    }
+    setPhotos([]); // Clear previous search results
+    setCurrentPage(1); // Reset page to 1 for new search
+    setError(null); // Clear any previous errors
+    setIsLoading(true); // Start loading indicator
   };
 
   const openModal = (photo) => {
@@ -48,7 +56,7 @@ function App() {
     setModalIsOpen(false);
   };
 
-  const onNextPage = async () => {
+  const onNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
 
@@ -56,8 +64,8 @@ function App() {
     if (!searchValue) {
       return;
     }
+
     const fetchImages = async () => {
-      setIsLoading(true);
       try {
         const response = await searchImages(searchValue, currentPage);
         if (currentPage === 1) {
@@ -66,12 +74,13 @@ function App() {
           setPhotos((prevPhotos) => [...prevPhotos, ...response.data.results]);
         }
       } catch (error) {
-        setError(error);
+        setError("Error fetching images. Please try again later.");
         console.error("Error fetching images:", error);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Stop loading indicator
       }
     };
+
     fetchImages();
   }, [searchValue, currentPage]);
 
@@ -80,7 +89,7 @@ function App() {
       <SearchBar
         searchValue={searchValue}
         handleSearchChange={handleSearchChange}
-        handleClick={handleClick}
+        handleSubmit={handleSubmit} // Pass handleSubmit function to SearchBar
       />
       <ImageGallery photos={photos} openModal={openModal} />
       {photos.length > 0 && <LoadMoreBtn onNextPage={onNextPage} />}
