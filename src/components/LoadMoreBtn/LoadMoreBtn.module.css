@@ -1,0 +1,8 @@
+.loadMore {
+  height: 40px;
+  width: 150px;
+  color: white;
+  background-color: rgba(38, 38, 128, 0.699);
+  border: none;
+  border-radius: 5px;
+}
