@@ -16,7 +16,7 @@ const searchImages = async (query, page) => {
         Authorization: ACCESS_KEY, 
       },
     });
-    return response.data;
+    return response.data.results;
   } catch (error) {
     throw error;
   }

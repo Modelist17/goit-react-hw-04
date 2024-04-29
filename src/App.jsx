@@ -30,8 +30,8 @@ function App() {
     try {
       setIsLoading(true);
       setCurrentPage(1);
-      const response = await searchImages(searchTerm, 1);
-      setPhotos(response.data.results);
+      const photos = await searchImages(searchTerm, 1);
+      setPhotos(photos);
       setIsLoading(false);
       setError(null); // Reset error state when new search is successful
     } catch (error) {
