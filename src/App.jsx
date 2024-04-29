@@ -1,3 +1,5 @@
+// App.jsx
+
 import React, { useState, useEffect } from "react";
 import ReactModal from "react-modal";
 import Loader from "./components/Loader/Loader";
@@ -22,16 +24,23 @@ function App() {
     setSearchValue(event.target.value.trim());
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!searchValue) {
       setError("Please enter a search query.");
       return;
     }
-    setPhotos([]); // Clear previous search results
-    setCurrentPage(1); // Reset page to 1 for new search
-    setError(null); 
-    setIsLoading(true); // Start loading indicator
+    try {
+      setIsLoading(true);
+      setCurrentPage(1);
+      const response = await searchImages(searchValue, currentPage);
+      setPhotos(response.data.results);
+      setIsLoading(false);
+    } catch (error) {
+      setError("Error fetching images. Please try again later.");
+      setIsLoading(false);
+      console.error("Error fetching images:", error);
+    }
   };
 
   const openModal = (photo) => {
@@ -73,7 +82,7 @@ function App() {
 
   return (
     <div>
-      <SearchBar onsearchQuery={setSearchValue} />
+      <SearchBar onSubmit={handleSubmit} onsearchQuery={setSearchValue} />
       <ImageGallery photos={photos} openModal={openModal} />
       {photos.length > 0 && <LoadMoreBtn onNextPage={onNextPage} />}
       {isLoading && <Loader />}
