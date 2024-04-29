@@ -2,15 +2,16 @@ import css from "./SearchBar.module.css";
 import { toast } from "react-hot-toast";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
-const initialValues = { searchTerm: "" };
+const SearchBar = ({ onSubmit }) => {
+  const initialValues = { searchTerm: "" };
 
-const SearchBar = ({ onsearchQuery }) => {
-  const handleSubmit = (values) => {
+  const handleSubmit = (values, { resetForm }) => {
     if (!values.searchTerm) {
       toast.error("Please enter a search term");
       return;
     }
-    onsearchQuery(values.searchTerm);
+    onSubmit(values.searchTerm);
+    resetForm(); // Reset form fields after submission
   };
 
   return (

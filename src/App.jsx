@@ -1,5 +1,3 @@
-// App.jsx
-
 import React, { useState, useEffect } from "react";
 import ReactModal from "react-modal";
 import Loader from "./components/Loader/Loader";
@@ -24,18 +22,18 @@ function App() {
     setSearchValue(event.target.value.trim());
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!searchValue) {
+  const handleSubmit = async (searchTerm) => {
+    if (!searchTerm) {
       setError("Please enter a search query.");
       return;
     }
     try {
       setIsLoading(true);
       setCurrentPage(1);
-      const response = await searchImages(searchValue, currentPage);
+      const response = await searchImages(searchTerm, 1);
       setPhotos(response.data.results);
       setIsLoading(false);
+      setError(null); // Reset error state when new search is successful
     } catch (error) {
       setError("Error fetching images. Please try again later.");
       setIsLoading(false);
@@ -63,17 +61,19 @@ function App() {
 
     const fetchImages = async () => {
       try {
+        setIsLoading(true);
         const response = await searchImages(searchValue, currentPage);
         if (currentPage === 1) {
           setPhotos(response.data.results);
         } else {
           setPhotos((prevPhotos) => [...prevPhotos, ...response.data.results]);
         }
+        setIsLoading(false);
+        setError(null); // Reset error state when images are successfully fetched
       } catch (error) {
         setError("Error fetching images. Please try again later.");
+        setIsLoading(false);
         console.error("Error fetching images:", error);
-      } finally {
-        setIsLoading(false); // Stop loading indicator
       }
     };
 
@@ -82,11 +82,11 @@ function App() {
 
   return (
     <div>
-      <SearchBar onSubmit={handleSubmit} onsearchQuery={setSearchValue} />
+      <SearchBar onSubmit={handleSubmit} />
       <ImageGallery photos={photos} openModal={openModal} />
       {photos.length > 0 && <LoadMoreBtn onNextPage={onNextPage} />}
       {isLoading && <Loader />}
-      {error && <ErrorMessage />}
+      {error && <ErrorMessage message={error} />}
       <ImageModal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
