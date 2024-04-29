@@ -18,22 +18,18 @@ function App() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
-  const handleSearchChange = (event) => {
-    setSearchValue(event.target.value.trim());
-  };
-
   const handleSubmit = async (searchTerm) => {
     if (!searchTerm) {
       setError("Please enter a search query.");
       return;
     }
+    setIsLoading(true);
+    setCurrentPage(1);
     try {
-      setIsLoading(true);
-      setCurrentPage(1);
       const photos = await searchImages(searchTerm, 1);
       setPhotos(photos);
       setIsLoading(false);
-      setError(null); // Reset error state when new search is successful
+      setError(null); 
     } catch (error) {
       setError("Error fetching images. Please try again later.");
       setIsLoading(false);
@@ -60,8 +56,8 @@ function App() {
     }
 
     const fetchImages = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
         const response = await searchImages(searchValue, currentPage);
         if (currentPage === 1) {
           setPhotos(response.data.results);
@@ -69,7 +65,7 @@ function App() {
           setPhotos((prevPhotos) => [...prevPhotos, ...response.data.results]);
         }
         setIsLoading(false);
-        setError(null); // Reset error state when images are successfully fetched
+        setError(null); //
       } catch (error) {
         setError("Error fetching images. Please try again later.");
         setIsLoading(false);
