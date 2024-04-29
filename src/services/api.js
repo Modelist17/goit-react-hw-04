@@ -1,7 +1,7 @@
 import axios from "axios";
 
 axios.defaults.baseURL = "https://api.unsplash.com";
-const ACCESS_KEY = "0RMlVjSgfmfRLcy228KXwjhyYTOg24ox1A18PLKzFEA"; 
+const ACCESS_KEY = "Client-ID 0RMlVjSgfmfRLcy228KXwjhyYTOg24ox1A18PLKzFEA"; 
 
 const searchImages = async (query, page) => {
   try {
@@ -13,7 +13,7 @@ const searchImages = async (query, page) => {
         orientation: "landscape",
       },
       headers: {
-        Authorization: `Client-ID ${ACCESS_KEY}`, 
+        Authorization: ACCESS_KEY, 
       },
     });
     return response.data;
