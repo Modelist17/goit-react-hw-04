@@ -23,13 +23,17 @@ function App() {
       setError("Please enter a search query.");
       return;
     }
+    setSearchValue(searchTerm);
+    setCurrentPage(1);
+    setPhotos([]);
+
     setIsLoading(true);
     setCurrentPage(1);
     try {
       const photos = await searchImages(searchTerm, 1);
       setPhotos(photos);
       setIsLoading(false);
-      setError(null); 
+      setError(null);
     } catch (error) {
       setError("Error fetching images. Please try again later.");
       setIsLoading(false);
