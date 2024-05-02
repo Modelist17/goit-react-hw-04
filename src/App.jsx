@@ -29,16 +29,7 @@ function App() {
 
     setIsLoading(true);
     setCurrentPage(1);
-    try {
-      const photos = await searchImages(searchTerm, 1);
-      setPhotos(photos);
-      setIsLoading(false);
-      setError(null);
-    } catch (error) {
-      setError("Error fetching images. Please try again later.");
-      setIsLoading(false);
-      console.error("Error fetching images:", error);
-    }
+    
   };
 
   const openModal = (photo) => {
