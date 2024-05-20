@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import ReactModal from "react-modal";
 import Loader from "./components/Loader/Loader";
 import searchImages from "./services/api";
 import SearchBar from "./components/SearchBar/SearchBar";
@@ -28,8 +27,16 @@ function App() {
     setPhotos([]);
 
     setIsLoading(true);
-    setCurrentPage(1);
-    
+    try {
+      const images = await searchImages(searchTerm, 1);
+      setPhotos(images.results);
+      setIsLoading(false);
+      setError(null);
+    } catch (error) {
+      setError("Error fetching images. Please try again later.");
+      setIsLoading(false);
+      console.error("Error fetching images:", error);
+    }
   };
 
   const openModal = (photo) => {
@@ -53,14 +60,14 @@ function App() {
     const fetchImages = async () => {
       setIsLoading(true);
       try {
-        const response = await searchImages(searchValue, currentPage);
-        if (currentPage === 1) {
-          setPhotos(response.data.results);
-        } else {
-          setPhotos((prevPhotos) => [...prevPhotos, ...response.data.results]);
-        }
+        const images = await searchImages(searchValue, currentPage);
+        setPhotos((prevPhotos) =>
+          currentPage === 1
+            ? images.results
+            : [...prevPhotos, ...images.results]
+        );
         setIsLoading(false);
-        setError(null); //
+        setError(null);
       } catch (error) {
         setError("Error fetching images. Please try again later.");
         setIsLoading(false);
